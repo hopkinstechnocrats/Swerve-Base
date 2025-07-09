@@ -13,6 +13,14 @@ public final class Constants{
         public static final int k_backLeftTurnCANID = 6;
         public static final int k_backRightTurnCANID = 7;
 
+        public static final double k_driveKP = 0.0;
+        public static final double k_driveKI = 0.0;
+        public static final double k_driveKD = 0.0;
+
+        public static final double k_turnKP = 0.0;
+        public static final double k_turnKI = 0.0;
+        public static final double k_turnKD = 0.0;
+
 
     }
 
