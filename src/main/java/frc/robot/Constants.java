@@ -21,6 +21,14 @@ public final class Constants{
         public static final double k_turnKI = 0.0;
         public static final double k_turnKD = 0.0;
 
+        public static final double frontLeftX = 0.3;
+        public static final double frontLeftY = 0.3;
+        public static final double frontRightX = 0.3;
+        public static final double frontRightY = -0.3;
+        public static final double backLeftX = -0.3;
+        public static final double backLeftY = 0.3;
+        public static final double backRightX = -0.3;
+        public static final double backRightY = -0.3;
 
     }
 

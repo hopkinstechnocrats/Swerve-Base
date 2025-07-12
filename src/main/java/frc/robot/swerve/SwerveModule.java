@@ -5,6 +5,7 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -38,11 +39,8 @@ public class SwerveModule extends SubsystemBase{
         m_turnMotor.getConfigurator().apply(m_turnConfig);
     }
 
-    public void DrivePID(double velocityRotPerSec){
-        m_driveMotor.setControl(m_driveRequest.withVelocity(velocityRotPerSec));
-    }
-
-    public void TurnPID(double positionRotations){
-        m_turnMotor.setControl(m_turnRequest.withPosition(positionRotations));
+    public void Drive(SwerveModuleState moduleState){
+        m_driveMotor.setControl(m_driveRequest.withVelocity(moduleState.speedMetersPerSecond));
+        m_turnMotor.setControl(m_turnRequest.withPosition(moduleState.angle.getDegrees()));
     }
 }
