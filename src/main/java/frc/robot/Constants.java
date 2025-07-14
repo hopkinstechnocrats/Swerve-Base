@@ -13,6 +13,11 @@ public final class Constants{
         public static final int k_backLeftTurnCANID = 6;
         public static final int k_backRightTurnCANID = 7;
 
+        public static final int k_flAbsEncoderPort = 0;
+        public static final int k_frAbsEncoderPort = 1;
+        public static final int k_blAbsEncoderPort = 2;
+        public static final int k_brAbsEncoderPort = 3;
+
         public static final double k_driveKP = 0.0;
         public static final double k_driveKI = 0.0;
         public static final double k_driveKD = 0.0;

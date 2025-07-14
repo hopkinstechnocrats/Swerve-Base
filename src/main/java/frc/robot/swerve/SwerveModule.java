@@ -7,6 +7,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -18,14 +19,18 @@ public class SwerveModule extends SubsystemBase{
     Slot0Configs m_driveConfig;
     Slot0Configs m_turnConfig;
     
+    AnalogEncoder m_absoluteEncoder;
+
     final PositionVoltage m_turnRequest = new PositionVoltage(0).withSlot(0);
     final VelocityVoltage m_driveRequest = new VelocityVoltage(0).withSlot(0);
 
     SwerveModuleState m_moduleState;
 
-    SwerveModule(int driveID, int turnID){
+    SwerveModule(int driveID, int turnID, int absEncoderPort){
         m_driveMotor = new TalonFX(driveID);
         m_turnMotor = new TalonFX(turnID);
+
+        m_absoluteEncoder = new AnalogEncoder(absEncoderPort);
 
         m_driveConfig = new Slot0Configs();
         m_turnConfig = new Slot0Configs();
@@ -40,6 +45,8 @@ public class SwerveModule extends SubsystemBase{
 
         m_driveMotor.getConfigurator().apply(m_driveConfig);
         m_turnMotor.getConfigurator().apply(m_turnConfig);
+
+        m_turnMotor.getConfigurator().setPosition(m_absoluteEncoder.get());
     }
 
     public void Drive(SwerveModuleState moduleState){

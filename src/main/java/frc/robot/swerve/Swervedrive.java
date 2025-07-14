@@ -31,10 +31,14 @@ public class Swervedrive extends SubsystemBase{
         m_backLeftPosition = new Translation2d(Constants.SwerveConstants.backLeftX, Constants.SwerveConstants.backLeftY);
         m_backRightPosition = new Translation2d(Constants.SwerveConstants.backRightX, Constants.SwerveConstants.backRightY);
 
-        fL = new SwerveModule(Constants.SwerveConstants.k_frontLeftDriveCANID, Constants.SwerveConstants.k_backLeftTurnCANID);
-        fR = new SwerveModule(Constants.SwerveConstants.k_frontRightDriveCANID, Constants.SwerveConstants.k_frontRightTurnCANID);
-        bL = new SwerveModule(Constants.SwerveConstants.k_backLeftDriveCANID, Constants.SwerveConstants.k_backLeftTurnCANID);
-        bR = new SwerveModule(Constants.SwerveConstants.k_backRightDriveCANID, Constants.SwerveConstants.k_backRightTurnCANID);
+        fL = new SwerveModule(Constants.SwerveConstants.k_frontLeftDriveCANID, 
+                Constants.SwerveConstants.k_backLeftTurnCANID, Constants.SwerveConstants.k_flAbsEncoderPort);
+        fR = new SwerveModule(Constants.SwerveConstants.k_frontRightDriveCANID, 
+                Constants.SwerveConstants.k_frontRightTurnCANID, Constants.SwerveConstants.k_frAbsEncoderPort);
+        bL = new SwerveModule(Constants.SwerveConstants.k_backLeftDriveCANID, 
+                Constants.SwerveConstants.k_backLeftTurnCANID, Constants.SwerveConstants.k_blAbsEncoderPort);
+        bR = new SwerveModule(Constants.SwerveConstants.k_backRightDriveCANID, 
+                Constants.SwerveConstants.k_backRightTurnCANID, Constants.SwerveConstants.k_brAbsEncoderPort);
 
         m_swerveKinematics = new SwerveDriveKinematics(m_frontLeftPosition, m_frontRightPosition, m_backLeftPosition, m_backRightPosition);
     }
