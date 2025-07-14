@@ -43,4 +43,12 @@ public class SwerveModule extends SubsystemBase{
         m_driveMotor.setControl(m_driveRequest.withVelocity(moduleState.speedMetersPerSecond));
         m_turnMotor.setControl(m_turnRequest.withPosition(moduleState.angle.getDegrees()));
     }
+
+    public double getAnglePositionRot(){
+        return m_turnMotor.getPosition().getValueAsDouble();
+    }
+
+    public double getDrivePositionRot(){
+        return m_driveMotor.getPosition().getValueAsDouble();
+    }
 }
