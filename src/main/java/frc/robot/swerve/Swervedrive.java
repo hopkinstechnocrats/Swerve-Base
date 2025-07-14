@@ -23,6 +23,8 @@ public class Swervedrive extends SubsystemBase{
 
     SwerveModuleState[] moduleStates;
 
+    ChassisSpeeds m_speeds;
+
     Swervedrive(){
         m_frontLeftPosition = new Translation2d(Constants.SwerveConstants.frontLeftX, Constants.SwerveConstants.frontLeftY);
         m_frontRightPosition = new Translation2d(Constants.SwerveConstants.frontRightX, Constants.SwerveConstants.frontRightY);

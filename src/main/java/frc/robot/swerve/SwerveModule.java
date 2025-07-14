@@ -5,6 +5,7 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -19,6 +20,8 @@ public class SwerveModule extends SubsystemBase{
     
     final PositionVoltage m_turnRequest = new PositionVoltage(0).withSlot(0);
     final VelocityVoltage m_driveRequest = new VelocityVoltage(0).withSlot(0);
+
+    SwerveModuleState m_moduleState;
 
     SwerveModule(int driveID, int turnID){
         m_driveMotor = new TalonFX(driveID);
@@ -40,8 +43,10 @@ public class SwerveModule extends SubsystemBase{
     }
 
     public void Drive(SwerveModuleState moduleState){
-        m_driveMotor.setControl(m_driveRequest.withVelocity(moduleState.speedMetersPerSecond));
-        m_turnMotor.setControl(m_turnRequest.withPosition(moduleState.angle.getDegrees()));
+        m_moduleState = moduleState;
+        m_moduleState.optimize(new Rotation2d(m_driveMotor.getPosition().getValueAsDouble()*2*Math.PI));
+        m_driveMotor.setControl(m_driveRequest.withVelocity(m_moduleState.speedMetersPerSecond));
+        m_turnMotor.setControl(m_turnRequest.withPosition(m_moduleState.angle.getRotations()));
     }
 
     public double getAnglePositionRot(){
