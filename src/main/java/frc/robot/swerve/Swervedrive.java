@@ -31,14 +31,14 @@ public class Swervedrive extends SubsystemBase{
         m_backLeftPosition = new Translation2d(Constants.SwerveConstants.backLeftX, Constants.SwerveConstants.backLeftY);
         m_backRightPosition = new Translation2d(Constants.SwerveConstants.backRightX, Constants.SwerveConstants.backRightY);
 
-        fL = new SwerveModule(Constants.SwerveConstants.k_frontLeftDriveCANID, 
-                Constants.SwerveConstants.k_backLeftTurnCANID, Constants.SwerveConstants.k_flAbsEncoderPort);
-        fR = new SwerveModule(Constants.SwerveConstants.k_frontRightDriveCANID, 
-                Constants.SwerveConstants.k_frontRightTurnCANID, Constants.SwerveConstants.k_frAbsEncoderPort);
-        bL = new SwerveModule(Constants.SwerveConstants.k_backLeftDriveCANID, 
-                Constants.SwerveConstants.k_backLeftTurnCANID, Constants.SwerveConstants.k_blAbsEncoderPort);
-        bR = new SwerveModule(Constants.SwerveConstants.k_backRightDriveCANID, 
-                Constants.SwerveConstants.k_backRightTurnCANID, Constants.SwerveConstants.k_brAbsEncoderPort);
+        fL = new SwerveModule(Constants.SwerveConstants.k_frontLeftDriveCANID, Constants.SwerveConstants.k_backLeftTurnCANID, 
+                Constants.SwerveConstants.k_flAbsEncoderPort, Constants.SwerveConstants.k_flAbsEncoderOffset);
+        fR = new SwerveModule(Constants.SwerveConstants.k_frontRightDriveCANID, Constants.SwerveConstants.k_frontRightTurnCANID, 
+                Constants.SwerveConstants.k_frAbsEncoderPort, Constants.SwerveConstants.k_frAbsEncoderOffset);
+        bL = new SwerveModule(Constants.SwerveConstants.k_backLeftDriveCANID, Constants.SwerveConstants.k_backLeftTurnCANID,
+                Constants.SwerveConstants.k_blAbsEncoderPort, Constants.SwerveConstants.k_blAbsEncoderOffset);
+        bR = new SwerveModule(Constants.SwerveConstants.k_backRightDriveCANID, Constants.SwerveConstants.k_backRightTurnCANID,
+                Constants.SwerveConstants.k_brAbsEncoderPort, Constants.SwerveConstants.k_brAbsEncoderOffset);
 
         m_swerveKinematics = new SwerveDriveKinematics(m_frontLeftPosition, m_frontRightPosition, m_backLeftPosition, m_backRightPosition);
     }

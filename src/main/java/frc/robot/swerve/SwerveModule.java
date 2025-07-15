@@ -26,7 +26,7 @@ public class SwerveModule extends SubsystemBase{
 
     SwerveModuleState m_moduleState;
 
-    SwerveModule(int driveID, int turnID, int absEncoderPort){
+    SwerveModule(int driveID, int turnID, int absEncoderPort, double absEcoderOffset){
         m_driveMotor = new TalonFX(driveID);
         m_turnMotor = new TalonFX(turnID);
 
@@ -46,7 +46,7 @@ public class SwerveModule extends SubsystemBase{
         m_driveMotor.getConfigurator().apply(m_driveConfig);
         m_turnMotor.getConfigurator().apply(m_turnConfig);
 
-        m_turnMotor.getConfigurator().setPosition(m_absoluteEncoder.get());
+        m_turnMotor.getConfigurator().setPosition(m_absoluteEncoder.get()-absEcoderOffset);
     }
 
     public void Drive(SwerveModuleState moduleState){
