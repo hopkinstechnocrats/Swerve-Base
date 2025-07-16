@@ -50,6 +50,7 @@ public class SwerveModule extends SubsystemBase{
     }
 
     public void Drive(SwerveModuleState moduleState){
+        //TODO gear ratios
         m_moduleState = moduleState;
         m_moduleState.optimize(new Rotation2d(m_driveMotor.getPosition().getValueAsDouble()*2*Math.PI));
         m_driveMotor.setControl(m_driveRequest.withVelocity(m_moduleState.speedMetersPerSecond));
