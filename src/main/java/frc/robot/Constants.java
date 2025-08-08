@@ -39,10 +39,14 @@ public final class Constants{
         public static final double k_frAbsEncoderOffset = 0.0;
         public static final double k_blAbsEncoderOffset = 0.0;
         public static final double k_brAbsEncoderOffset = 0.0;
+
+        public static final double k_maxLinearSpeedMeterPerSecond = 3;
+        public static final double k_maxAngularSpeedRadPerSec = 3;
     }
  
     public static final class ControlConstants{
         public static final double k_driveControllerDeadband = 0.1;
+        public static final double k_operatorControllerDeadband = 0.1;
     }
 
 }
