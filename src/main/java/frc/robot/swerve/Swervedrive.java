@@ -1,5 +1,6 @@
 package frc.robot.swerve;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.Kinematics;
@@ -21,6 +22,8 @@ public class Swervedrive extends SubsystemBase{
     SwerveModule bL;
     SwerveModule bR;
 
+    Gyro gyro;
+
     SwerveModuleState[] moduleStates;
 
     ChassisSpeeds m_speeds;
@@ -41,6 +44,8 @@ public class Swervedrive extends SubsystemBase{
                 Constants.SwerveConstants.k_brAbsEncoderPort, Constants.SwerveConstants.k_brAbsEncoderOffset);
 
         m_swerveKinematics = new SwerveDriveKinematics(m_frontLeftPosition, m_frontRightPosition, m_backLeftPosition, m_backRightPosition);
+
+        gyro = new Gyro(Constants.GyroConstants.k_gyroID);
     }
 
     public void Drive(ChassisSpeeds desiredState){
@@ -49,5 +54,9 @@ public class Swervedrive extends SubsystemBase{
         fR.Drive(moduleStates[1]);
         bL.Drive(moduleStates[2]);
         bR.Drive(moduleStates[3]);
+    }
+
+    public Rotation2d getRotation(){
+        return gyro.getRotation();
     }
 }
