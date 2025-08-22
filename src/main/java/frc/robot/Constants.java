@@ -26,6 +26,9 @@ public final class Constants{
         public static final double k_turnKI = 0.0;
         public static final double k_turnKD = 0.0;
 
+        public static final boolean k_turnInverted = true;
+        public static final boolean k_driveInverted = false;
+
         public static final double frontLeftX = 0.3;
         public static final double frontLeftY = 0.3;
         public static final double frontRightX = 0.3;
@@ -42,6 +45,10 @@ public final class Constants{
 
         public static final double k_maxLinearSpeedMeterPerSecond = 3;
         public static final double k_maxAngularSpeedRadPerSec = 4.0 * Math.PI;
+
+        public static final double k_driveGearRatio = 6.75;
+        public static final double k_turnGearRatio = 12.8;
+
     }
  
     public static final class ControlConstants{

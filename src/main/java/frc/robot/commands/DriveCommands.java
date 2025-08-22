@@ -42,7 +42,7 @@ public class DriveCommands{
             ChassisSpeeds speeds = new ChassisSpeeds(
                 linearVelocity.getX() * Constants.SwerveConstants.k_maxLinearSpeedMeterPerSecond,
                 linearVelocity.getY() * Constants.SwerveConstants.k_maxLinearSpeedMeterPerSecond,
-                omega * Constants.SwerveConstants.k_maxAngularSpeedRadPerSec);
+                m_omega * Constants.SwerveConstants.k_maxAngularSpeedRadPerSec);
             boolean isFlipped = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
             swervedrive.Drive(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, 
                         isFlipped

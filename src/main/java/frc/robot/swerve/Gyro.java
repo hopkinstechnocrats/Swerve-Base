@@ -4,7 +4,6 @@ import com.ctre.phoenix6.hardware.Pigeon2;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 
 public class Gyro extends SubsystemBase{
     
@@ -17,6 +16,4 @@ public class Gyro extends SubsystemBase{
     public Rotation2d getRotation(){
         return pigeon.getRotation2d();
     }
-
-     
 }

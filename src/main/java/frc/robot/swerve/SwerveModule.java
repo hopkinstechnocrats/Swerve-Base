@@ -1,9 +1,15 @@
 package frc.robot.swerve;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.swerve.SwerveModuleConstantsFactory;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -18,6 +24,9 @@ public class SwerveModule extends SubsystemBase{
 
     Slot0Configs m_driveConfig;
     Slot0Configs m_turnConfig;
+
+    MotorOutputConfigs m_driveOutputConfigs;
+    MotorOutputConfigs m_turnOutputConfigs;
     
     AnalogEncoder m_absoluteEncoder;
 
@@ -43,6 +52,11 @@ public class SwerveModule extends SubsystemBase{
         m_turnConfig.kI = Constants.SwerveConstants.k_turnKI;
         m_turnConfig.kD = Constants.SwerveConstants.k_turnKD;
 
+        m_turnOutputConfigs.Inverted = InvertedValue.valueOf(1);
+
+        m_driveOutputConfigs.NeutralMode = NeutralModeValue.Brake;
+        m_turnOutputConfigs.NeutralMode = NeutralModeValue.Brake;
+
         m_driveMotor.getConfigurator().apply(m_driveConfig);
         m_turnMotor.getConfigurator().apply(m_turnConfig);
 
@@ -50,11 +64,10 @@ public class SwerveModule extends SubsystemBase{
     }
 
     public void Drive(SwerveModuleState moduleState){
-        //TODO gear ratios
         m_moduleState = moduleState;
         m_moduleState.optimize(new Rotation2d(m_driveMotor.getPosition().getValueAsDouble()*2*Math.PI));
-        m_driveMotor.setControl(m_driveRequest.withVelocity(m_moduleState.speedMetersPerSecond));
-        m_turnMotor.setControl(m_turnRequest.withPosition(m_moduleState.angle.getRotations()));
+        m_driveMotor.setControl(m_driveRequest.withVelocity(m_moduleState.speedMetersPerSecond * Constants.SwerveConstants.k_driveGearRatio));
+        m_turnMotor.setControl(m_turnRequest.withPosition(m_moduleState.angle.getRotations() * Constants.SwerveConstants.k_turnGearRatio));
     }
 
     public double getAnglePositionRot(){
