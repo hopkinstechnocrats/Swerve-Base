@@ -54,6 +54,7 @@ public final class Constants{
     public static final class ControlConstants{
         public static final double k_driveControllerDeadband = 0.1;
         public static final double k_operatorControllerDeadband = 0.1;
+        public static final int k_driverPort = 0;
     }
     
     public static final class GyroConstants{

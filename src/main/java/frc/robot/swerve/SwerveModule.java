@@ -52,7 +52,10 @@ public class SwerveModule extends SubsystemBase{
         m_turnConfig.kI = Constants.SwerveConstants.k_turnKI;
         m_turnConfig.kD = Constants.SwerveConstants.k_turnKD;
 
-        m_turnOutputConfigs.Inverted = InvertedValue.valueOf(1);
+        //TODO I have no clue
+        m_turnOutputConfigs.Inverted = InvertedValue.CounterClockwise_Positive;
+        m_driveOutputConfigs.Inverted = InvertedValue.CounterClockwise_Positive;
+
 
         m_driveOutputConfigs.NeutralMode = NeutralModeValue.Brake;
         m_turnOutputConfigs.NeutralMode = NeutralModeValue.Brake;

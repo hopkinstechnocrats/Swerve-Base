@@ -37,7 +37,7 @@ public class DriveCommands{
         return Commands.run(() -> {
             Translation2d linearVelocity = getLinearVelocityFromJoysticks(xVelocity, yVelocity); 
             
-            double m_omega = MathUtil.applyDeadband(omega, Constants.ControlConstants.k_operatorControllerDeadband);
+            double m_omega = MathUtil.applyDeadband(omega, Constants.ControlConstants.k_driveControllerDeadband);
 
             ChassisSpeeds speeds = new ChassisSpeeds(
                 linearVelocity.getX() * Constants.SwerveConstants.k_maxLinearSpeedMeterPerSecond,
