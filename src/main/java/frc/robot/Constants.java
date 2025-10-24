@@ -1,5 +1,8 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+
 public final class Constants{
 
     public static final class SwerveConstants{
@@ -48,7 +51,9 @@ public final class Constants{
 
         public static final double k_driveGearRatio = 6.75;
         public static final double k_turnGearRatio = 12.8;
+        public static final double k_wheelCircumferenceMeters = 0.1016 * Math.PI;
 
+        public static final Pose2d k_startPose = new Pose2d(0, 0, new Rotation2d(0));
     }
  
     public static final class ControlConstants{

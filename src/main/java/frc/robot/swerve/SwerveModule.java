@@ -12,6 +12,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveModuleConstantsFactory;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -74,10 +75,22 @@ public class SwerveModule extends SubsystemBase{
     }
 
     public double getAnglePositionRot(){
-        return m_turnMotor.getPosition().getValueAsDouble();
+        return m_turnMotor.getPosition().getValueAsDouble()/Constants.SwerveConstants.k_turnGearRatio;
     }
 
     public double getDrivePositionRot(){
-        return m_driveMotor.getPosition().getValueAsDouble();
+        return m_driveMotor.getPosition().getValueAsDouble()/Constants.SwerveConstants.k_driveGearRatio;
+    }
+
+    public double getDriveDistanceMeters(){
+        return this.getDrivePositionRot()*Constants.SwerveConstants.k_wheelCircumferenceMeters;
+    }
+
+    public Rotation2d getAngleRotation2d(){
+        return new Rotation2d(m_turnMotor.getPosition().getValueAsDouble()* Math.PI * 2); 
+    }
+
+    public SwerveModulePosition getModulePosition(){
+        return new SwerveModulePosition(this.getDriveDistanceMeters(), this.getAngleRotation2d());
     }
 }
