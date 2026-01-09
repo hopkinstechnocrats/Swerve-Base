@@ -53,7 +53,7 @@ public class SwerveModule extends SubsystemBase{
         m_turnConfig.kI = Constants.SwerveConstants.k_turnKI;
         m_turnConfig.kD = Constants.SwerveConstants.k_turnKD;
 
-        //TODO I have no clue
+        //TODO I have no clue something with inversion
         m_turnOutputConfigs.Inverted = InvertedValue.CounterClockwise_Positive;
         m_driveOutputConfigs.Inverted = InvertedValue.CounterClockwise_Positive;
 
