@@ -19,13 +19,13 @@ public class RobotContainer {
 
     public RobotContainer() {
         configureBindings();
-        swerve.setDefaultCommand(
-            DriveCommands.joystickDriveFieldOriented(swerve, -driveController.getLeftX(), -driveController.getLeftY(), -driveController.getRightX()) 
-                );
     }
 
     private void configureBindings() {
-        
+        swerve.setDefaultCommand(
+            DriveCommands.joystickDriveFieldOriented(swerve, driveController::getLeftX, driveController::getLeftY, driveController::getRightX) 
+                );
+
     }
 
     public Command getAutonomousCommand() {

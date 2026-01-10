@@ -34,11 +34,11 @@ public class DriveCommands{
     }
 
     public static Command joystickDriveFieldOriented(Swervedrive swervedrive,
-            double xVelocity, double yVelocity, double omega){
+            DoubleSupplier xVelocity, DoubleSupplier yVelocity, DoubleSupplier omega){
         return Commands.run(() -> {
-            Translation2d linearVelocity = getLinearVelocityFromJoysticks(xVelocity, yVelocity); 
+            Translation2d linearVelocity = getLinearVelocityFromJoysticks(-xVelocity.getAsDouble(), -yVelocity.getAsDouble()); 
             
-            double m_omega = MathUtil.applyDeadband(omega, Constants.ControlConstants.k_driveControllerDeadband);
+            double m_omega = MathUtil.applyDeadband(-omega.getAsDouble(), Constants.ControlConstants.k_driveControllerDeadband);
 
             ChassisSpeeds speeds = new ChassisSpeeds(
                 linearVelocity.getX() * Constants.SwerveConstants.k_maxLinearSpeedMeterPerSecond,
