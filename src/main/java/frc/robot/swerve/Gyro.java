@@ -16,4 +16,17 @@ public class Gyro extends SubsystemBase{
     public Rotation2d getRotation(){
         return pigeon.getRotation2d();
     }
+
+    public double getAccelX(){
+        return pigeon.getAccelerationX().getValueAsDouble();
+    }
+
+    public double getAccelY(){
+        return pigeon.getAccelerationY().getValueAsDouble();
+    }
+
+    public double getAccelZ(){
+        return pigeon.getAccelerationZ().getValueAsDouble();
+    }
+
 }
