@@ -11,21 +11,24 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.swerve.Gyro;
 import frc.robot.swerve.Swervedrive;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.TeleopDrive;
 
 public class RobotContainer {
 
-    private Swervedrive swerve;
+    Swervedrive m_swerve = new Swervedrive();
     CommandXboxController driveController = new CommandXboxController(Constants.ControlConstants.k_driverPort);
 
     public RobotContainer() {
+        m_swerve.setDefaultCommand(
+            new TeleopDrive(m_swerve, () -> driveController.getLeftX(), () -> driveController.getLeftY(), () -> driveController.getRightX()) 
+        );
+        
+
         configureBindings();
     }
 
     private void configureBindings() {
-        swerve.setDefaultCommand(
-            DriveCommands.joystickDriveFieldOriented(swerve, driveController::getLeftX, driveController::getLeftY, driveController::getRightX) 
-                );
-
+        
     }
 
     public Command getAutonomousCommand() {

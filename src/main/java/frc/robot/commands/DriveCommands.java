@@ -17,6 +17,7 @@ import java.util.function.DoubleSupplier;
 public class DriveCommands{
     private DriveCommands(){}
   
+    /*
     private static Translation2d getLinearVelocityFromJoysticks(double x, double y) {
 
         // Apply deadband
@@ -32,23 +33,15 @@ public class DriveCommands{
             .transformBy(new Transform2d(linearMagnitude, 0.0, new Rotation2d()))
             .getTranslation();
     }
-
+    */
     public static Command joystickDriveFieldOriented(Swervedrive swervedrive,
             DoubleSupplier xVelocity, DoubleSupplier yVelocity, DoubleSupplier omega){
         return Commands.run(() -> {
-            Translation2d linearVelocity = getLinearVelocityFromJoysticks(-xVelocity.getAsDouble(), -yVelocity.getAsDouble()); 
-            
-            double m_omega = MathUtil.applyDeadband(-omega.getAsDouble(), Constants.ControlConstants.k_driveControllerDeadband);
-
             ChassisSpeeds speeds = new ChassisSpeeds(
-                linearVelocity.getX() * Constants.SwerveConstants.k_maxLinearSpeedMeterPerSecond,
-                linearVelocity.getY() * Constants.SwerveConstants.k_maxLinearSpeedMeterPerSecond,
-                m_omega * Constants.SwerveConstants.k_maxAngularSpeedRadPerSec);
-            boolean isFlipped = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
-            swervedrive.Drive(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, 
-                        isFlipped
-                            ? swervedrive.getRotation().plus(new Rotation2d(Math.PI))
-                            : swervedrive.getRotation()));
+                -xVelocity.getAsDouble() * Constants.SwerveConstants.k_maxLinearSpeedMeterPerSecond,
+                -yVelocity.getAsDouble() * Constants.SwerveConstants.k_maxLinearSpeedMeterPerSecond,
+                omega.getAsDouble() * Constants.SwerveConstants.k_maxAngularSpeedRadPerSec);
+            swervedrive.Drive(ChassisSpeeds.fromFieldRelativeSpeeds(speeds,  swervedrive.getRotation()));
         }, swervedrive);
     }
     
