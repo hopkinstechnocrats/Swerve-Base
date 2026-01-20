@@ -1,5 +1,6 @@
 package frc.robot.swerve;
 
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -37,8 +38,8 @@ public class SwerveModule extends SubsystemBase{
     SwerveModuleState m_moduleState;
 
     SwerveModule(int driveID, int turnID, int absEncoderPort, double absEcoderOffset){
-        m_driveMotor = new TalonFX(driveID);
-        m_turnMotor = new TalonFX(turnID);
+        m_driveMotor = new TalonFX(driveID, new CANBus("GertrudeGreyser"));
+        m_turnMotor = new TalonFX(turnID, new CANBus("GertrudeGreyser"));
 
         m_absoluteEncoder = new AnalogEncoder(absEncoderPort);
 
