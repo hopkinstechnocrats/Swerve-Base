@@ -67,6 +67,11 @@ public class Swervedrive extends SubsystemBase{
         swerveOdometry = new SwerveDriveOdometry(m_swerveKinematics, gyro.getRotation(), new SwerveModulePosition[]{
             fL.getModulePosition(), fR.getModulePosition(), bL.getModulePosition(), bR.getModulePosition()
         }, Constants.SwerveConstants.k_startPose);
+
+        flAnalog = table.getDoubleTopic("FL Absolute Encoder").getEntry(0);
+        frAnalog = table.getDoubleTopic("FR Absolute Encoder").getEntry(0);
+        blAnalog = table.getDoubleTopic("BL Absolute Encoder").getEntry(0);
+        brAnalog = table.getDoubleTopic("BR Absolute Encoder").getEntry(0);
     }
 
 
