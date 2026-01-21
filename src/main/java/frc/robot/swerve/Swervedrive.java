@@ -9,6 +9,9 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.DoubleEntry;
 import frc.robot.Constants;
 
 public class Swervedrive extends SubsystemBase{
@@ -22,6 +25,12 @@ public class Swervedrive extends SubsystemBase{
     SwerveDriveOdometry swerveOdometry;
     Pose2d m_pose;
     
+    NetworkTableInstance inst;
+    NetworkTable table;
+    DoubleEntry flAnalog;
+    DoubleEntry frAnalog;
+    DoubleEntry blAnalog;
+    DoubleEntry brAnalog;
 
     SwerveModule fL;
     SwerveModule fR;
@@ -35,6 +44,9 @@ public class Swervedrive extends SubsystemBase{
     ChassisSpeeds m_speeds;
 
     public Swervedrive(){
+        inst = NetworkTableInstance.getDefault();
+        table = inst.getTable("Swerve");
+
         m_frontLeftPosition = new Translation2d(Constants.SwerveConstants.frontLeftX, Constants.SwerveConstants.frontLeftY);
         m_frontRightPosition = new Translation2d(Constants.SwerveConstants.frontRightX, Constants.SwerveConstants.frontRightY);
         m_backLeftPosition = new Translation2d(Constants.SwerveConstants.backLeftX, Constants.SwerveConstants.backLeftY);
@@ -63,6 +75,11 @@ public class Swervedrive extends SubsystemBase{
         m_pose = swerveOdometry.update(gyro.getRotation(), new SwerveModulePosition[]{
              fL.getModulePosition(), fR.getModulePosition(), bL.getModulePosition(), bR.getModulePosition()
         });
+
+        flAnalog.set(fL.getAbsEncoderPositionRot());
+        frAnalog.set(fR.getAbsEncoderPositionRot());
+        blAnalog.set(bL.getAbsEncoderPositionRot());
+        brAnalog.set(bR.getAbsEncoderPositionRot());
     }
 
     public void Drive(ChassisSpeeds desiredState){

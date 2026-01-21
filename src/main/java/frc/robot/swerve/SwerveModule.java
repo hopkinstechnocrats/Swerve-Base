@@ -97,4 +97,8 @@ public class SwerveModule extends SubsystemBase{
     public SwerveModulePosition getModulePosition(){
         return new SwerveModulePosition(this.getDriveDistanceMeters(), this.getAngleRotation2d());
     }
+
+    public double getAbsEncoderPositionRot(){
+        return m_absoluteEncoder.get();
+    }
 }
