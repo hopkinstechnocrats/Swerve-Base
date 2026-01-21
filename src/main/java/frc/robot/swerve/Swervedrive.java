@@ -11,6 +11,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.DoubleEntry;
 import frc.robot.Constants;
 
@@ -27,6 +28,9 @@ public class Swervedrive extends SubsystemBase{
     
     NetworkTableInstance inst;
     NetworkTable table;
+
+    StructArrayPublisher<SwerveModuleState> statePublisher;
+
     DoubleEntry flAnalog;
     DoubleEntry frAnalog;
     DoubleEntry blAnalog;
@@ -46,6 +50,8 @@ public class Swervedrive extends SubsystemBase{
     public Swervedrive(){
         inst = NetworkTableInstance.getDefault();
         table = inst.getTable("Swerve");
+
+        statePublisher = table.getStructArrayTopic("Swerve Module States", SwerveModuleState.struct).publish();
 
         m_frontLeftPosition = new Translation2d(Constants.SwerveConstants.frontLeftX, Constants.SwerveConstants.frontLeftY);
         m_frontRightPosition = new Translation2d(Constants.SwerveConstants.frontRightX, Constants.SwerveConstants.frontRightY);
@@ -80,6 +86,8 @@ public class Swervedrive extends SubsystemBase{
         m_pose = swerveOdometry.update(gyro.getRotation(), new SwerveModulePosition[]{
              fL.getModulePosition(), fR.getModulePosition(), bL.getModulePosition(), bR.getModulePosition()
         });
+
+        statePublisher.set(moduleStates);
 
         flAnalog.set(fL.getAbsEncoderPositionRot());
         frAnalog.set(fR.getAbsEncoderPositionRot());
