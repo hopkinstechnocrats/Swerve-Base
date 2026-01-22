@@ -29,7 +29,8 @@ public class Swervedrive extends SubsystemBase{
     NetworkTableInstance inst;
     NetworkTable table;
 
-    StructArrayPublisher<SwerveModuleState> statePublisher;
+    StructArrayPublisher<SwerveModuleState> desiredStatePublisher;
+    StructArrayPublisher<SwerveModuleState> actualStatePublisher;
 
     DoubleEntry flAnalog;
     DoubleEntry frAnalog;
@@ -43,7 +44,8 @@ public class Swervedrive extends SubsystemBase{
 
     Gyro gyro;
 
-    SwerveModuleState[] moduleStates;
+    SwerveModuleState[] desiredModuleStates;
+    SwerveModuleState[] actualModuleState;
 
     ChassisSpeeds m_speeds;
 
@@ -51,7 +53,8 @@ public class Swervedrive extends SubsystemBase{
         inst = NetworkTableInstance.getDefault();
         table = inst.getTable("Swerve");
 
-        statePublisher = table.getStructArrayTopic("Swerve Module States", SwerveModuleState.struct).publish();
+        desiredStatePublisher = table.getStructArrayTopic("Desired Module States", SwerveModuleState.struct).publish();
+        actualStatePublisher = table.getStructArrayTopic("Actual Module States", SwerveModuleState.struct).publish();
 
         m_frontLeftPosition = new Translation2d(Constants.SwerveConstants.frontLeftX, Constants.SwerveConstants.frontLeftY);
         m_frontRightPosition = new Translation2d(Constants.SwerveConstants.frontRightX, Constants.SwerveConstants.frontRightY);
@@ -87,7 +90,11 @@ public class Swervedrive extends SubsystemBase{
              fL.getModulePosition(), fR.getModulePosition(), bL.getModulePosition(), bR.getModulePosition()
         });
 
-        statePublisher.set(moduleStates);
+        desiredStatePublisher.set(desiredModuleStates);
+
+        updateActualStates();
+
+        actualStatePublisher.set(actualModuleState);
 
         flAnalog.set(fL.getAbsEncoderPositionRot());
         frAnalog.set(fR.getAbsEncoderPositionRot());
@@ -96,11 +103,19 @@ public class Swervedrive extends SubsystemBase{
     }
 
     public void Drive(ChassisSpeeds desiredState){
-        moduleStates = m_swerveKinematics.toSwerveModuleStates(desiredState);
-        fL.Drive(moduleStates[0]);
-        fR.Drive(moduleStates[1]);
-        bL.Drive(moduleStates[2]);
-        bR.Drive(moduleStates[3]);
+        desiredModuleStates = m_swerveKinematics.toSwerveModuleStates(desiredState);
+        fL.Drive(desiredModuleStates[0]);
+        fR.Drive(desiredModuleStates[1]);
+        bL.Drive(desiredModuleStates[2]);
+        bR.Drive(desiredModuleStates[3]);
+    }
+
+    private void updateActualStates(){
+        actualModuleState[0] = new SwerveModuleState(fL.getDriveVelocityMeterPerSec(), fL.getAngleRotation2d());
+        actualModuleState[1] = new SwerveModuleState(fR.getDriveVelocityMeterPerSec(), fR.getAngleRotation2d());
+        actualModuleState[2] = new SwerveModuleState(bL.getDriveVelocityMeterPerSec(), bL.getAngleRotation2d());
+        actualModuleState[3] = new SwerveModuleState(bR.getDriveVelocityMeterPerSec(), bR.getAngleRotation2d());
+
     }
 
     public Rotation2d getRotation(){

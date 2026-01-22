@@ -101,4 +101,8 @@ public class SwerveModule extends SubsystemBase{
     public double getAbsEncoderPositionRot(){
         return m_absoluteEncoder.get();
     }
+
+    public double getDriveVelocityMeterPerSec(){
+        return (m_driveMotor.getVelocity().getValueAsDouble()/Constants.SwerveConstants.k_driveGearRatio) * Constants.SwerveConstants.k_wheelCircumferenceMeters;
+    }
 }
