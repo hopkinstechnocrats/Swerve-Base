@@ -58,8 +58,8 @@ public class SwerveModule extends SubsystemBase{
         m_driveOutputConfigs = new MotorOutputConfigs();
 
         //TODO I have no clue something with inversion
-        m_turnOutputConfigs.Inverted = InvertedValue.CounterClockwise_Positive;
-        m_driveOutputConfigs.Inverted = InvertedValue.CounterClockwise_Positive;
+        m_turnOutputConfigs.Inverted = InvertedValue.Clockwise_Positive;
+        m_driveOutputConfigs.Inverted = InvertedValue.Clockwise_Positive;
 
 
         m_driveOutputConfigs.NeutralMode = NeutralModeValue.Brake;
@@ -73,7 +73,7 @@ public class SwerveModule extends SubsystemBase{
 
     public void Drive(SwerveModuleState moduleState){
         m_moduleState = moduleState;
-        m_moduleState.optimize(new Rotation2d(m_driveMotor.getPosition().getValueAsDouble()*2*Math.PI));
+        m_moduleState.optimize(this.getAngleRotation2d());
         m_driveMotor.setControl(m_driveRequest.withVelocity(m_moduleState.speedMetersPerSecond * Constants.SwerveConstants.k_driveGearRatio));
         m_turnMotor.setControl(m_turnRequest.withPosition(m_moduleState.angle.getRotations() * Constants.SwerveConstants.k_turnGearRatio));
     }

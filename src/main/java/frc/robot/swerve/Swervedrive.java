@@ -45,7 +45,7 @@ public class Swervedrive extends SubsystemBase{
     Gyro gyro;
 
     SwerveModuleState[] desiredModuleStates;
-    SwerveModuleState[] actualModuleState;
+    SwerveModuleState[] actualModuleState = {new SwerveModuleState(), new SwerveModuleState(), new SwerveModuleState(), new SwerveModuleState()};
 
     ChassisSpeeds m_speeds;
 
@@ -110,6 +110,7 @@ public class Swervedrive extends SubsystemBase{
         bR.Drive(desiredModuleStates[3]);
     }
 
+    
     private void updateActualStates(){
         actualModuleState[0] = new SwerveModuleState(fL.getDriveVelocityMeterPerSec(), fL.getAngleRotation2d());
         actualModuleState[1] = new SwerveModuleState(fR.getDriveVelocityMeterPerSec(), fR.getAngleRotation2d());
@@ -117,6 +118,7 @@ public class Swervedrive extends SubsystemBase{
         actualModuleState[3] = new SwerveModuleState(bR.getDriveVelocityMeterPerSec(), bR.getAngleRotation2d());
 
     }
+    
 
     public Rotation2d getRotation(){
         return gyro.getRotation();
