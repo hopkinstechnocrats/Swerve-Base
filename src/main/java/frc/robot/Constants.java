@@ -25,7 +25,7 @@ public final class Constants{
         public static final double k_driveKI = 0.0;
         public static final double k_driveKD = 0.0;
 
-        public static final double k_turnKP = 0.3;
+        public static final double k_turnKP = 0.5;
         public static final double k_turnKI = 0.0;
         public static final double k_turnKD = 0.0;
 
@@ -41,10 +41,10 @@ public final class Constants{
         public static final double backRightX = -0.3;
         public static final double backRightY = -0.3;
 
-        public static final double k_flAbsEncoderOffset = 0.44;
-        public static final double k_frAbsEncoderOffset = 0.232;
-        public static final double k_blAbsEncoderOffset = 0.606;
-        public static final double k_brAbsEncoderOffset = 0.138;
+        public static final double k_flAbsEncoderOffset = 0.942;
+        public static final double k_frAbsEncoderOffset = 0.76;
+        public static final double k_blAbsEncoderOffset = 0.603;
+        public static final double k_brAbsEncoderOffset = 0.120;
 
         public static final double k_maxLinearSpeedMeterPerSecond = 3;
         public static final double k_maxAngularSpeedRadPerSec = 4.0 * Math.PI;

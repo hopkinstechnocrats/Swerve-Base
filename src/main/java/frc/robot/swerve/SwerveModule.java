@@ -91,7 +91,7 @@ public class SwerveModule extends SubsystemBase{
     }
 
     public Rotation2d getAngleRotation2d(){
-        return new Rotation2d(m_turnMotor.getPosition().getValueAsDouble()* Math.PI * 2); 
+        return new Rotation2d((m_turnMotor.getPosition().getValueAsDouble() * Math.PI * 2 )/Constants.SwerveConstants.k_turnGearRatio ); 
     }
 
     public SwerveModulePosition getModulePosition(){
