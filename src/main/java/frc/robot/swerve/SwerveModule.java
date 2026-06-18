@@ -61,33 +61,40 @@ public class SwerveModule extends SubsystemBase{
 
         m_turnConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
         m_turnConfig.Feedback.RotorToSensorRatio = Constants.SwerveConstants.k_turnGearRatio;
+        m_turnConfig.Feedback.FeedbackRemoteSensorID = m_absoluteEncoder.getDeviceID();
 
-        m_turnConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-        m_driveConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        m_driveConfig.Feedback.SensorToMechanismRatio = Constants.SwerveConstants.k_driveGearRatio;
 
+        m_turnConfig.ClosedLoopGeneral.ContinuousWrap = true;
+
+        m_turnConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        m_driveConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
         m_driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         m_turnConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+        m_driveConfig.CurrentLimits.StatorCurrentLimit = 80;
 
         m_driveMotor.getConfigurator().apply(m_driveConfig);
         m_turnMotor.getConfigurator().apply(m_turnConfig);
         m_absoluteEncoder.getConfigurator().apply(m_encoderConfig);
     }
 
-    //a
+
     public void Drive(SwerveModuleState moduleState){
         m_moduleState = moduleState;
         m_moduleState.optimize(this.getAngleRotation2d());
-        m_driveMotor.setControl(m_driveRequest.withVelocity(m_moduleState.speedMetersPerSecond * Constants.SwerveConstants.k_driveGearRatio));
-        m_turnMotor.setControl(m_turnRequest.withPosition(m_moduleState.angle.getRotations() * Constants.SwerveConstants.k_turnGearRatio));
+        m_moduleState.speedMetersPerSecond *= m_moduleState.angle.minus(this.getAngleRotation2d()).getCos();
+        m_driveMotor.setControl(m_driveRequest.withVelocity(m_moduleState.speedMetersPerSecond));
+        m_turnMotor.setControl(m_turnRequest.withPosition(m_moduleState.angle.getRotations()));
     }
 
     public double getAnglePositionRot(){
-        return m_turnMotor.getPosition().getValueAsDouble()/Constants.SwerveConstants.k_turnGearRatio;
+        return m_absoluteEncoder.getPosition().getValueAsDouble();
     }
 
     public double getDrivePositionRot(){
-        return m_driveMotor.getPosition().getValueAsDouble()/Constants.SwerveConstants.k_driveGearRatio;
+        return m_driveMotor.getPosition().getValueAsDouble();
     }
 
     public double getDriveDistanceMeters(){
@@ -95,7 +102,7 @@ public class SwerveModule extends SubsystemBase{
     }
 
     public Rotation2d getAngleRotation2d(){
-        return new Rotation2d((m_turnMotor.getPosition().getValueAsDouble() * Math.PI * 2 )/Constants.SwerveConstants.k_turnGearRatio ); 
+        return new Rotation2d((m_absoluteEncoder.getPosition().getValueAsDouble() * Math.PI * 2); 
     }
 
     public SwerveModulePosition getModulePosition(){
@@ -103,10 +110,10 @@ public class SwerveModule extends SubsystemBase{
     }
 
     public double getAbsEncoderPositionRot(){
-        return m_absoluteEncoder.get();
+        return m_absoluteEncoder.getPosition().getValueAsDouble();
     }
 
     public double getDriveVelocityMeterPerSec(){
-        return (m_driveMotor.getVelocity().getValueAsDouble()/Constants.SwerveConstants.k_driveGearRatio) * Constants.SwerveConstants.k_wheelCircumferenceMeters;
+        return m_driveMotor.getVelocity().getValueAsDouble() * Constants.SwerveConstants.k_wheelCircumferenceMeters;
     }
 }
