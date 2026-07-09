@@ -7,7 +7,7 @@ public final class Constants{
 
     public static final class SwerveConstants{
         public static final int k_frontLeftDriveCANID = 13;
-        public static final int k_frontRightDriveCANID = 12
+        public static final int k_frontRightDriveCANID = 12;
         public static final int k_backLeftDriveCANID = 11;
         public static final int k_backRightDriveCANID = 10;
 
@@ -47,9 +47,9 @@ public final class Constants{
         public static final double k_blAbsEncoderOffset = 0.325;
         public static final double k_brAbsEncoderOffset = 0.221;
 
-        public static final double k_maxLinearSpeedMeterPerSecond = 18;
-        public static final double k_slowMultiplier = 0.4;
-        public static final double k_midMultiplier = 0.66;
+        public static final double k_maxLinearSpeedMeterPerSecond = 4.3;
+        public static final double k_slowSpeed = 1.8;
+        public static final double k_midSpeed = 2.57;
         public static final double k_maxAngularSpeedRadPerSec = 10.0 * Math.PI;
 
         public static final double k_driveGearRatio = 6.03;
