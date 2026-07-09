@@ -30,9 +30,6 @@ public final class Constants{
         public static final double k_turnKI = 5.0;
         public static final double k_turnKD = 0.0;
 
-        public static final boolean k_turnInverted = true;
-        public static final boolean k_driveInverted = false;
-
         public static final double frontLeftX = 0.21761;
         public static final double frontLeftY = 0.31921;
         public static final double frontRightX = 0.21761;
