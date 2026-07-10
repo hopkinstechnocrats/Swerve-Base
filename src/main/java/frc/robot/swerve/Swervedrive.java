@@ -1,5 +1,6 @@
 package frc.robot.swerve;
 
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -12,6 +13,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.networktables.DoubleEntry;
 import frc.robot.Constants;
 
@@ -23,14 +27,16 @@ public class Swervedrive extends SubsystemBase{
     Translation2d m_backLeftPosition;
     Translation2d m_backRightPosition;
 
-    SwerveDriveOdometry swerveOdometry;
     Pose2d m_pose;
+    SwerveDrivePoseEstimator m_poseEstimator;
     
     NetworkTableInstance inst;
     NetworkTable table;
 
     StructArrayPublisher<SwerveModuleState> desiredStatePublisher;
     StructArrayPublisher<SwerveModuleState> actualStatePublisher;
+
+    StructPublisher<Pose2d> robotPosition;
 
     DoubleEntry flAnalog;
     DoubleEntry frAnalog;
@@ -73,7 +79,7 @@ public class Swervedrive extends SubsystemBase{
         m_swerveKinematics = new SwerveDriveKinematics(m_frontLeftPosition, m_frontRightPosition, m_backLeftPosition, m_backRightPosition);
 
         gyro = new Gyro(Constants.GyroConstants.k_gyroID);
-        swerveOdometry = new SwerveDriveOdometry(m_swerveKinematics, gyro.getRotation(), new SwerveModulePosition[]{
+        m_poseEstimator = new SwerveDrivePoseEstimator(m_swerveKinematics, gyro.getRotation(), new SwerveModulePosition[]{
             fL.getModulePosition(), fR.getModulePosition(), bL.getModulePosition(), bR.getModulePosition()
         }, Constants.SwerveConstants.k_startPose);
 
@@ -81,18 +87,20 @@ public class Swervedrive extends SubsystemBase{
         frAnalog = table.getDoubleTopic("FR Absolute Encoder").getEntry(0);
         blAnalog = table.getDoubleTopic("BL Absolute Encoder").getEntry(0);
         brAnalog = table.getDoubleTopic("BR Absolute Encoder").getEntry(0);
+
+        robotPosition = table.getStructTopic("Robot Position", Pose2d.struct).publish();
     }
 
 
     @Override
     public void periodic(){
-        m_pose = swerveOdometry.update(gyro.getRotation(), new SwerveModulePosition[]{
+        m_pose = m_poseEstimator.update(gyro.getRotation(), new SwerveModulePosition[]{
              fL.getModulePosition(), fR.getModulePosition(), bL.getModulePosition(), bR.getModulePosition()
         });
 
         desiredStatePublisher.set(desiredModuleStates);
 
-        updateActualStates();
+        this.updateActualStates();
 
         actualStatePublisher.set(actualModuleState);
 
@@ -100,6 +108,7 @@ public class Swervedrive extends SubsystemBase{
         frAnalog.set(fR.getAbsEncoderPositionRot());
         blAnalog.set(bL.getAbsEncoderPositionRot());
         brAnalog.set(bR.getAbsEncoderPositionRot());
+        robotPosition.set(m_pose);
     }
 
     public void Drive(ChassisSpeeds desiredState){
@@ -122,5 +131,14 @@ public class Swervedrive extends SubsystemBase{
 
     public Rotation2d getRotation(){
         return gyro.getRotation();
+    }
+
+    public void resetHeading(){
+        if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red){
+            m_poseEstimator.resetRotation(Rotation2d.k180deg);
+        }
+        else{
+            m_poseEstimator.resetRotation(Rotation2d.kZero);
+        }
     }
 }

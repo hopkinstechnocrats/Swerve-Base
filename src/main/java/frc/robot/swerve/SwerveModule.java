@@ -7,10 +7,11 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.swerve.SwerveModuleConstantsFactory;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -24,13 +25,12 @@ public class SwerveModule extends SubsystemBase{
     TalonFX m_driveMotor;
     TalonFX m_turnMotor;
 
-    Slot0Configs m_driveConfig;
-    Slot0Configs m_turnConfig;
+    TalonFXConfiguration m_driveConfig;
+    TalonFXConfiguration m_turnConfig;
 
-    MotorOutputConfigs m_driveOutputConfigs;
-    MotorOutputConfigs m_turnOutputConfigs;
-    
-    AnalogEncoder m_absoluteEncoder;
+    CANcoder m_absoluteEncoder;
+
+    CANcoderConfiguration m_encoderConfig;
 
     final PositionVoltage m_turnRequest = new PositionVoltage(0).withSlot(0);
     final VelocityVoltage m_driveRequest = new VelocityVoltage(0).withSlot(0);
@@ -41,49 +41,60 @@ public class SwerveModule extends SubsystemBase{
         m_driveMotor = new TalonFX(driveID, new CANBus("GertrudeGreyser"));
         m_turnMotor = new TalonFX(turnID, new CANBus("GertrudeGreyser"));
 
-        m_absoluteEncoder = new AnalogEncoder(absEncoderPort);
+        m_absoluteEncoder = new CANcoder(absEncoderPort, new CANBus("GertrudeGreyser"));
 
-        m_driveConfig = new Slot0Configs();
-        m_turnConfig = new Slot0Configs();
+        m_encoderConfig = new CANcoderConfiguration();
 
-        m_driveConfig.kP = Constants.SwerveConstants.k_driveKP;
-        m_driveConfig.kI = Constants.SwerveConstants.k_driveKI;
-        m_driveConfig.kD = Constants.SwerveConstants.k_driveKD;
+        m_encoderConfig.MagnetSensor.MagnetOffset = absEcoderOffset;
 
-        m_turnConfig.kP = Constants.SwerveConstants.k_turnKP;
-        m_turnConfig.kI = Constants.SwerveConstants.k_turnKI;
-        m_turnConfig.kD = Constants.SwerveConstants.k_turnKD;
+        m_driveConfig = new TalonFXConfiguration();
+        m_turnConfig = new TalonFXConfiguration();
 
-        m_turnOutputConfigs = new MotorOutputConfigs();
-        m_driveOutputConfigs = new MotorOutputConfigs();
+        m_driveConfig.Slot0.kP = Constants.SwerveConstants.k_driveKP;
+        m_driveConfig.Slot0.kI = Constants.SwerveConstants.k_driveKI;
+        m_driveConfig.Slot0.kD = Constants.SwerveConstants.k_driveKD;
+        m_driveConfig.Slot0.kV = Constants.SwerveConstants.k_driveKV;
 
-        //TODO I have no clue something with inversion
-        m_turnOutputConfigs.Inverted = InvertedValue.Clockwise_Positive;
-        m_driveOutputConfigs.Inverted = InvertedValue.Clockwise_Positive;
+        m_turnConfig.Slot0.kP = Constants.SwerveConstants.k_turnKP;
+        m_turnConfig.Slot0.kI = Constants.SwerveConstants.k_turnKI;
+        m_turnConfig.Slot0.kD = Constants.SwerveConstants.k_turnKD;
 
+        m_turnConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+        m_turnConfig.Feedback.RotorToSensorRatio = Constants.SwerveConstants.k_turnGearRatio;
+        m_turnConfig.Feedback.FeedbackRemoteSensorID = m_absoluteEncoder.getDeviceID();
 
-        m_driveOutputConfigs.NeutralMode = NeutralModeValue.Brake;
-        m_turnOutputConfigs.NeutralMode = NeutralModeValue.Brake;
+        m_driveConfig.Feedback.SensorToMechanismRatio = Constants.SwerveConstants.k_driveGearRatio;
+
+        m_turnConfig.ClosedLoopGeneral.ContinuousWrap = true;
+
+        m_turnConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        m_driveConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+
+        m_driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        m_turnConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+        m_driveConfig.CurrentLimits.StatorCurrentLimit = 80;
 
         m_driveMotor.getConfigurator().apply(m_driveConfig);
         m_turnMotor.getConfigurator().apply(m_turnConfig);
-
-        m_turnMotor.getConfigurator().setPosition(m_absoluteEncoder.get()-absEcoderOffset);
+        m_absoluteEncoder.getConfigurator().apply(m_encoderConfig);
     }
+
 
     public void Drive(SwerveModuleState moduleState){
         m_moduleState = moduleState;
         m_moduleState.optimize(this.getAngleRotation2d());
-        m_driveMotor.setControl(m_driveRequest.withVelocity(m_moduleState.speedMetersPerSecond * Constants.SwerveConstants.k_driveGearRatio));
-        m_turnMotor.setControl(m_turnRequest.withPosition(m_moduleState.angle.getRotations() * Constants.SwerveConstants.k_turnGearRatio));
+        m_moduleState.speedMetersPerSecond *= m_moduleState.angle.minus(this.getAngleRotation2d()).getCos();
+        m_driveMotor.setControl(m_driveRequest.withVelocity(m_moduleState.speedMetersPerSecond));
+        m_turnMotor.setControl(m_turnRequest.withPosition(m_moduleState.angle.getRotations()));
     }
 
     public double getAnglePositionRot(){
-        return m_turnMotor.getPosition().getValueAsDouble()/Constants.SwerveConstants.k_turnGearRatio;
+        return m_absoluteEncoder.getPosition().getValueAsDouble();
     }
 
     public double getDrivePositionRot(){
-        return m_driveMotor.getPosition().getValueAsDouble()/Constants.SwerveConstants.k_driveGearRatio;
+        return m_driveMotor.getPosition().getValueAsDouble();
     }
 
     public double getDriveDistanceMeters(){
@@ -91,7 +102,7 @@ public class SwerveModule extends SubsystemBase{
     }
 
     public Rotation2d getAngleRotation2d(){
-        return new Rotation2d((m_turnMotor.getPosition().getValueAsDouble() * Math.PI * 2 )/Constants.SwerveConstants.k_turnGearRatio ); 
+        return new Rotation2d(m_absoluteEncoder.getPosition().getValueAsDouble() * Math.PI * 2); 
     }
 
     public SwerveModulePosition getModulePosition(){
@@ -99,10 +110,10 @@ public class SwerveModule extends SubsystemBase{
     }
 
     public double getAbsEncoderPositionRot(){
-        return m_absoluteEncoder.get();
+        return m_absoluteEncoder.getPosition().getValueAsDouble();
     }
 
     public double getDriveVelocityMeterPerSec(){
-        return (m_driveMotor.getVelocity().getValueAsDouble()/Constants.SwerveConstants.k_driveGearRatio) * Constants.SwerveConstants.k_wheelCircumferenceMeters;
+        return m_driveMotor.getVelocity().getValueAsDouble() * Constants.SwerveConstants.k_wheelCircumferenceMeters;
     }
 }
