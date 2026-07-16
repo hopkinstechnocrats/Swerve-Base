@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.swerve.Gyro;
 import frc.robot.swerve.Swervedrive;
-import frc.robot.commands.DriveCommands;
 import frc.robot.commands.TeleopDrive;
 
 public class RobotContainer {
@@ -20,7 +19,8 @@ public class RobotContainer {
 
     public RobotContainer() {
         m_swerve.setDefaultCommand(
-            new TeleopDrive(m_swerve, () -> driveController.getLeftY(), () -> driveController.getLeftX(), () -> driveController.getRightX()) 
+            new TeleopDrive(m_swerve, () -> driveController.getLeftY(), () -> driveController.getLeftX(), () -> driveController.getRightX(), 
+                driveController::getLeftTriggerAxis, driveController::getRightTriggerAxis) 
         );
         
 
@@ -28,7 +28,7 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-        
+        driveController.a().onTrue(Commands.runOnce(() -> m_swerve.resetHeading(), m_swerve)); 
     }
 
     public Command getAutonomousCommand() {

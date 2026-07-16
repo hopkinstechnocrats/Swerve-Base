@@ -130,7 +130,7 @@ public class Swervedrive extends SubsystemBase{
     
 
     public Rotation2d getRotation(){
-        return gyro.getRotation();
+        return m_pose.getRotation();
     }
 
     public void resetHeading(){
