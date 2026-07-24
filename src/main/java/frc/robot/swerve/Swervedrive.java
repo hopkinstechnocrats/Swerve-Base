@@ -50,6 +50,7 @@ public class Swervedrive extends SubsystemBase{
 
     Gyro gyro;
 
+    //desired states are the commanded value from controller, actual states are the states as reported by the robot
     SwerveModuleState[] desiredModuleStates;
     SwerveModuleState[] actualModuleState = {new SwerveModuleState(), new SwerveModuleState(), new SwerveModuleState(), new SwerveModuleState()};
 
@@ -79,6 +80,8 @@ public class Swervedrive extends SubsystemBase{
         m_swerveKinematics = new SwerveDriveKinematics(m_frontLeftPosition, m_frontRightPosition, m_backLeftPosition, m_backRightPosition);
 
         gyro = new Gyro(Constants.GyroConstants.k_gyroID);
+
+        //pose estimator is our main way of keeping track of where the robot on the field, start position is a constant 2d field location
         m_poseEstimator = new SwerveDrivePoseEstimator(m_swerveKinematics, gyro.getRotation(), new SwerveModulePosition[]{
             fL.getModulePosition(), fR.getModulePosition(), bL.getModulePosition(), bR.getModulePosition()
         }, Constants.SwerveConstants.k_startPose);
@@ -94,10 +97,12 @@ public class Swervedrive extends SubsystemBase{
 
     @Override
     public void periodic(){
+        //updates our robot position with rotation as tracked by the gyro and using the change in position from wheels, can also use vision readings (see 2026 code)
         m_pose = m_poseEstimator.update(gyro.getRotation(), new SwerveModulePosition[]{
              fL.getModulePosition(), fR.getModulePosition(), bL.getModulePosition(), bR.getModulePosition()
         });
 
+        //update all out network table values
         desiredStatePublisher.set(desiredModuleStates);
 
         this.updateActualStates();
@@ -111,8 +116,11 @@ public class Swervedrive extends SubsystemBase{
         robotPosition.set(m_pose);
     }
 
+    //our main function for driving
     public void Drive(ChassisSpeeds desiredState){
+        //breaks apart a chassis speed into the needed states of all four modules in an array
         desiredModuleStates = m_swerveKinematics.toSwerveModuleStates(desiredState);
+        // fl = 0, fr = 1, bl = 2, br = 3
         fL.Drive(desiredModuleStates[0]);
         fR.Drive(desiredModuleStates[1]);
         bL.Drive(desiredModuleStates[2]);
@@ -130,10 +138,12 @@ public class Swervedrive extends SubsystemBase{
     
 
     public Rotation2d getRotation(){
+        //report pose rotation instead of from gyro because it accounts for heading resets
         return m_pose.getRotation();
     }
 
     public void resetHeading(){
+        //sets the forward direction for field oriented, pose estimator handles all the offsets since it's where we get our rotation from
         if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red){
             m_poseEstimator.resetRotation(Rotation2d.k180deg);
         }

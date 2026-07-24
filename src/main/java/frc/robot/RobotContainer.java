@@ -14,10 +14,12 @@ import frc.robot.commands.TeleopDrive;
 
 public class RobotContainer {
 
+    //setup all our objects
     Swervedrive m_swerve = new Swervedrive();
     CommandXboxController driveController = new CommandXboxController(Constants.ControlConstants.k_driverPort);
 
     public RobotContainer() {
+        //default commands will run on subsytems when no other commands are running, all subsystems should have one
         m_swerve.setDefaultCommand(
             new TeleopDrive(m_swerve, () -> driveController.getLeftY(), () -> driveController.getLeftX(), () -> driveController.getRightX(), 
                 driveController::getLeftTriggerAxis, driveController::getRightTriggerAxis) 
@@ -28,6 +30,7 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
+        //nice place to configure what all the buttons do
         driveController.a().onTrue(Commands.runOnce(() -> m_swerve.resetHeading(), m_swerve)); 
     }
 
